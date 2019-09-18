@@ -1,18 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { TextInput, Button, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-const App = () => {
+const AuthScreen = () => {
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -30,32 +24,33 @@ const App = () => {
 
       {/* Actions */}
       <View style={styles.cta}>
-        <View style={{ height: 70 }}>
+        <View style={{ height: 80 }}>
           <TextInput
             placeholder="Please, type your email address"
-            mode="outlined"
+            mode="flat"
             label="Email"
+            value={email}
+            onChangeText={text => setEmail(text)}
           />
         </View>
-        <View style={{ height: 70 }}>
+        <View style={{ height: 80 }}>
           <TextInput
             placeholder="Please, type your password"
-            mode="outlined"
+            mode="flat"
             label="Password"
             secureTextEntry={true}
+            value={password}
+            onChangeText={text => setPassword(text)}
           />
           <Text style={{ paddingVertical: 10 }}>Forgot password ?</Text>
         </View>
 
         <View style={{ marginVertical: 40 }}>
-          <Button mode="contained">
-            <Text>Sign In</Text>
-          </Button>
+          <Button mode="contained">Log In</Button>
         </View>
 
-        <Divider style={{ marginHorizontal: 40 }} />
-
-        <View>
+        <View style={{ marginVertical: 20 }}>
+          <Divider style={{ marginHorizontal: 40 }} />
           <Text
             style={{
               textAlign: "center",
@@ -105,7 +100,8 @@ const styles = StyleSheet.create({
 
   logoContainer: {
     flex: 1.3,
-    paddingVertical: 10
+    paddingVertical: 10,
+    justifyContent: "center"
   },
 
   cta: {
@@ -119,4 +115,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+export default AuthScreen;

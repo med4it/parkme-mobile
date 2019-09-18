@@ -29,6 +29,7 @@ target 'ParkMe' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
   target 'ParkMeTests' do
     inherit! :search_paths
     # Pods for testing
