@@ -1,21 +1,22 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { TextInput, Button, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-const AuthScreen = () => {
+import { buttonText } from "./styles";
+
+const AuthScreen = ({ navigation }) => {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
       <View style={styles.logoContainer}>
         <Text
           style={{
             fontSize: 50,
             textAlign: "center",
-            fontWeight: "bold",
-            color: "steelblue"
+            fontWeight: "bold"
           }}
         >
           ParkMe
@@ -46,7 +47,9 @@ const AuthScreen = () => {
         </View>
 
         <View style={{ marginVertical: 40 }}>
-          <Button mode="contained">Log In</Button>
+          <Button mode="contained" onPress={() => navigation.navigate("Home")}>
+            <Text style={buttonText}>Log In</Text>
+          </Button>
         </View>
 
         <View style={{ marginVertical: 20 }}>
@@ -54,7 +57,7 @@ const AuthScreen = () => {
           <Text
             style={{
               textAlign: "center",
-              color: "#555",
+              color: "#555555",
               fontSize: 17,
               marginVertical: 14
             }}
@@ -69,7 +72,7 @@ const AuthScreen = () => {
               <Icon size={16} color="white" name="google" />
             )}
           >
-            Log in with Google
+            <Text style={buttonText}>Log in with Google</Text>
           </Button>
         </View>
       </View>
@@ -86,7 +89,7 @@ const AuthScreen = () => {
           ParkMe Mobile - Copyright (c) 2019
         </Text>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
