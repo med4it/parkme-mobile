@@ -51,13 +51,10 @@ const UserMap = ({ navigation }) => {
       pos => {
         setLocationState({ position: pos, isPositionLoaded: true });
       },
-      error => {
-        // eslint-disable-next-line no-alert
-        alert("Error loading position");
-      },
+      () => {},
       {
         enableHighAccuracy: true,
-        distanceFilter: 1
+        timeout: 5000
       }
     );
 

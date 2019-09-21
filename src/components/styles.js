@@ -1,9 +1,13 @@
 export const buttonText = {
   textTransform: "uppercase",
-  paddingHorizontal: 4
+  color: "white"
 };
 
 export const smallButtonText = {
   ...buttonText,
   fontSize: 11
+};
+
+export const regularButton = {
+  marginVertical: 15
 };

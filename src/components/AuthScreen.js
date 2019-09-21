@@ -10,7 +10,7 @@ const AuthScreen = ({ navigation }) => {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+    <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
       <View style={styles.logoContainer}>
         <Text
           style={{
