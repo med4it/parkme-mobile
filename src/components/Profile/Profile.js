@@ -11,31 +11,53 @@ import {
 
 import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 import { buttonText, regularButton } from "../styles";
-const Profile = () => {
+import { UserContext } from "../../providers/UserProvider";
+import { signOut } from "../../firebase";
+
+const Profile = ({ navigation }) => {
+  const user = React.useContext(UserContext);
+  console.log("User Data", user);
+  let avatarLabel = user.displayName
+    .split(" ")
+    .map((word, index) => {
+      if (index > 1) return null;
+      return word[0];
+    })
+    .join("")
+    .toUpperCase();
   return (
     <ContainerWithFlex>
       <View style={styles.userInfo}>
         <View style={styles.userInfoContainer}>
           <View style={styles.avatar}>
-            <Avatar.Text size={85} label="MA" />
+            <Avatar.Text size={85} label={avatarLabel} />
           </View>
 
           <View style={styles.userDetails}>
-            <Text>Mohammed Ait Haddou</Text>
-            <Text>mohammedaithaddou@gmail.com</Text>
-            <Subheading>Balance: 300 DH</Subheading>
+            <Text>{user.displayName}</Text>
+            <Text>{user.email}</Text>
+            <Subheading>{`Balance: ${user.balence} DH`}</Subheading>
           </View>
         </View>
+      </View>
+
+      <View>
+        <Button
+          mode="contained"
+          color="tomato"
+          onPress={async () => {
+            await signOut();
+            navigation.navigate("SignIn");
+          }}
+        >
+          Log Out
+        </Button>
       </View>
 
       <Divider />
 
       <View style={styles.balanceCharger}>
-        <TextInput
-          mode="flat"
-          label="Charging Code"
-          placeholder="Please, enter a charging code"
-        />
+        <TextInput mode="flat" label="Charging Code" />
         <Button mode="contained" style={regularButton}>
           <Text style={buttonText} color="white">
             Submit

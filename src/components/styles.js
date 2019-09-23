@@ -3,6 +3,12 @@ export const buttonText = {
   color: "white"
 };
 
+export const underlinedTextButton = {
+  textTransform: "uppercase",
+  textDecorationLine: "underline",
+  textAlign: "center"
+};
+
 export const smallButtonText = {
   ...buttonText,
   fontSize: 11

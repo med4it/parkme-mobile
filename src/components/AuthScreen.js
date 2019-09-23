@@ -1,14 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
-import { TextInput, Button, Divider } from "react-native-paper";
+import { TextInput, Button, Divider, HelperText } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import { buttonText } from "./styles";
+import { buttonText, underlinedTextButton } from "./styles";
+import { firebaseAuth } from "../firebase";
 
 const AuthScreen = ({ navigation }) => {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let [signInError, setSignInError] = useState("");
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
       <View style={styles.logoContainer}>
@@ -25,9 +28,13 @@ const AuthScreen = ({ navigation }) => {
 
       {/* Actions */}
       <View style={styles.cta}>
+        <View>
+          {Boolean(signInError.length) && (
+            <HelperText type="error">{signInError}</HelperText>
+          )}
+        </View>
         <View style={{ height: 80 }}>
           <TextInput
-            placeholder="Please, type your email address"
             mode="flat"
             label="Email"
             value={email}
@@ -36,7 +43,6 @@ const AuthScreen = ({ navigation }) => {
         </View>
         <View style={{ height: 80 }}>
           <TextInput
-            placeholder="Please, type your password"
             mode="flat"
             label="Password"
             secureTextEntry={true}
@@ -47,24 +53,62 @@ const AuthScreen = ({ navigation }) => {
         </View>
 
         <View style={{ marginVertical: 40 }}>
-          <Button mode="contained" onPress={() => navigation.navigate("Home")}>
-            <Text style={buttonText}>Log In</Text>
-          </Button>
-        </View>
-
-        <View style={{ marginVertical: 20 }}>
-          <Divider style={{ marginHorizontal: 40 }} />
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#555555",
-              fontSize: 17,
-              marginVertical: 14
+          <Button
+            mode="contained"
+            onPress={async () => {
+              try {
+                const {
+                  user: authenticatedUser
+                } = await firebaseAuth.signInWithEmailAndPassword(
+                  email,
+                  password
+                );
+                console.log(authenticatedUser);
+              } catch (error) {
+                setSignInError(error.message);
+              }
             }}
           >
-            You do not have an account, create one!
-          </Text>
+            <Text style={buttonText}>Log In</Text>
+          </Button>
+          <Divider style={{ marginHorizontal: 40 }} />
+        </View>
 
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 10
+          }}
+        >
+          <View
+            style={{
+              flex: 2
+            }}
+          >
+            <Text style={{ textAlign: "center" }}>
+              You don't have an account,
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flex: 1
+            }}
+          >
+            <Button
+              compact={true}
+              mode="text"
+              onPress={() => navigation.navigate("Register")}
+            >
+              <Text style={underlinedTextButton}>create one!</Text>
+            </Button>
+          </View>
+        </View>
+
+        <View style={{ height: 200 }}>
           <Button
             mode="contained"
             color="#cf4332"

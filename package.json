@@ -8,6 +8,9 @@
       "lint": "eslint ./src"
    },
    "dependencies": {
+      "firebase": "^5.7.0",
+      "firebase-admin": "^6.4.0",
+      "firebase-tools": "^6.1.2",
       "eslint-config-prettier": "^6.3.0",
       "react": "16.8.6",
       "react-native": "0.60.5",

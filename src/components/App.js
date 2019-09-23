@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -20,6 +21,9 @@ import { createMaterialBottomTabNavigator } from "react-navigation-material-bott
 import ParkingDetails from "./ParkingDetails";
 import Reservations from "./Reservations";
 import Profile from "./Profile/Profile";
+import RegisterScreen from "./RegisterScreen";
+import UserProvider, { UserContext } from "../providers/UserProvider";
+import ParkingsProvider from "../providers/ParkingsProvider";
 
 const HomeNavigator = createStackNavigator({
   Home: HomeScreen,
@@ -28,7 +32,8 @@ const HomeNavigator = createStackNavigator({
 
 const AuthNavigator = createStackNavigator(
   {
-    SignIn: AuthScreen
+    SignIn: AuthScreen,
+    Register: RegisterScreen
   },
   {
     headerMode: "none"
@@ -74,21 +79,35 @@ const TabNavigator = createMaterialBottomTabNavigator(
   }
 );
 
-const AppContainer = createAppContainer(
-  createSwitchNavigator({
-    Auth: { screen: AuthNavigator },
-    TabNavigator: { screen: TabNavigator }
-  })
-);
+const Navigator = () => {
+  const user = React.useContext(UserContext);
+  console.log("USER RECEIVED = ", user);
+  const AppContainer = createAppContainer(
+    createSwitchNavigator(
+      {
+        Auth: { screen: AuthNavigator },
+        TabNavigator: { screen: TabNavigator }
+      },
+      {
+        initialRouteName: user && user.displayName ? "TabNavigator" : "Auth"
+      }
+    )
+  );
+
+  return <AppContainer />;
+};
 
 const App = () => {
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{ flex: 1 }}>
-      <PaperProvider>
-        <AppContainer />
-      </PaperProvider>
-    </View>
+    <UserProvider>
+      <View style={{ flex: 1 }}>
+        <ParkingsProvider>
+          <PaperProvider>
+            <Navigator />
+          </PaperProvider>
+        </ParkingsProvider>
+      </View>
+    </UserProvider>
   );
 };
 
