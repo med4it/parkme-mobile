@@ -20,6 +20,7 @@ const _askForLocationServices = () => {
 const UserMap = ({ navigation }) => {
   // Get parkings data
   const parkings = React.useContext(ParkingsContext);
+  let [toolbarState, setToolbarState] = useState({ bottom: 1 });
 
   let [locationState, setLocationState] = useState({
     position: {
@@ -30,8 +31,6 @@ const UserMap = ({ navigation }) => {
     },
     isPositionLoaded: false
   });
-
-  let [toolbarState, setToolbarState] = useState({ bottom: 1 });
 
   const toolbarHack = () => {
     if (toolbarState.bottom === 1) {
@@ -80,7 +79,14 @@ const UserMap = ({ navigation }) => {
                 key={park.name + park.available + park.occupied}
               >
                 <Icon size={30} name="parking" color="blue" />
-                <Callout onPress={() => navigation.navigate("Parking")}>
+                <Callout
+                  onPress={() =>
+                    navigation.navigate("Parking", {
+                      id: park.id,
+                      name: park.name
+                    })
+                  }
+                >
                   <View style={{ width: 150 }}>
                     <Text>{park.name}</Text>
                     <Text>{`Available Lots : ${park.available}`}</Text>

@@ -12,19 +12,31 @@ import {
 import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 import { buttonText, regularButton } from "../styles";
 import { UserContext } from "../../providers/UserProvider";
-import { signOut } from "../../firebase";
+import { signOut, firebaseStore } from "../../firebase";
 
 const Profile = ({ navigation }) => {
   const user = React.useContext(UserContext);
-  console.log("User Data", user);
-  let avatarLabel = user.displayName
-    .split(" ")
-    .map((word, index) => {
-      if (index > 1) return null;
-      return word[0];
-    })
-    .join("")
-    .toUpperCase();
+  const { displayName, email, balence } = user;
+  let [avatarLabel, setAvatarLabel] = React.useState("..");
+
+  React.useEffect(() => {
+    if (!user) {
+      navigation.navigate("AuthLoading");
+    }
+    if (user && user.displayName)
+      setAvatarLabel(
+        user.displayName
+          .split(" ")
+          .map((word, index) => {
+            if (index > 1) return null;
+            return word[0];
+          })
+          .join("")
+          .toUpperCase()
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   return (
     <ContainerWithFlex>
       <View style={styles.userInfo}>
@@ -34,9 +46,9 @@ const Profile = ({ navigation }) => {
           </View>
 
           <View style={styles.userDetails}>
-            <Text>{user.displayName}</Text>
-            <Text>{user.email}</Text>
-            <Subheading>{`Balance: ${user.balence} DH`}</Subheading>
+            <Text>{displayName}</Text>
+            <Text>{email}</Text>
+            <Subheading>{`Balance: ${balence} DH`}</Subheading>
           </View>
         </View>
       </View>
@@ -47,7 +59,7 @@ const Profile = ({ navigation }) => {
           color="tomato"
           onPress={async () => {
             await signOut();
-            navigation.navigate("SignIn");
+            navigation.navigate("AuthLoading");
           }}
         >
           Log Out
@@ -58,7 +70,19 @@ const Profile = ({ navigation }) => {
 
       <View style={styles.balanceCharger}>
         <TextInput mode="flat" label="Charging Code" />
-        <Button mode="contained" style={regularButton}>
+        <Button
+          mode="contained"
+          style={regularButton}
+          onPress={async () => {
+            try {
+              const userRef = firebaseStore.doc(`users/${user.uid}`);
+              let newBalence = balence + 150;
+              await userRef.update({ balence: newBalence });
+            } catch (error) {
+              console.log(error.message);
+            }
+          }}
+        >
           <Text style={buttonText} color="white">
             Submit
           </Text>

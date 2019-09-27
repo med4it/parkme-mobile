@@ -1,11 +1,17 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { DataTable, Button, Divider } from "react-native-paper";
+import { DataTable, Button } from "react-native-paper";
 import ContainerWithFlex from "./styledComponents/ContainerWithFlex";
 
 import { smallButtonText } from "./styles";
+import { ParkingsContext } from "../providers/ParkingsProvider";
 
-const ParkingDetails = () => {
+const ParkingDetails = ({ navigation }) => {
+  const id = navigation.getParam("id");
+  const parkings = React.useContext(ParkingsContext);
+  const park = parkings.filter(item => item.id === id)[0];
+  const { lots } = park;
+
   return (
     <ContainerWithFlex>
       <View style={styles.parkingInfo}>
@@ -24,60 +30,12 @@ const ParkingDetails = () => {
             </DataTable.Title>
           </DataTable.Header>
 
-          <DataTable.Row>
-            <DataTable.Cell>
-              <Text>1</Text>
-            </DataTable.Cell>
-            <DataTable.Cell>
-              <Text>Occupied</Text>
-            </DataTable.Cell>
-
-            <View style={styles.buttonCell}>
-              <Button mode="contained" style={styles.reserveButton} disabled>
-                <Text style={smallButtonText}>Reserve</Text>
-              </Button>
-            </View>
-          </DataTable.Row>
-
-          <DataTable.Row>
-            <DataTable.Cell>
-              <Text>2</Text>
-            </DataTable.Cell>
-            <DataTable.Cell>
-              <Text>Reserved</Text>
-            </DataTable.Cell>
-
-            <View style={styles.buttonCell}>
-              <Button mode="contained" style={styles.reserveButton} disabled>
-                <Text style={smallButtonText}>Reserve</Text>
-              </Button>
-            </View>
-          </DataTable.Row>
-
-          <DataTable.Row>
-            <DataTable.Cell>
-              <Text>3</Text>
-            </DataTable.Cell>
-
-            <DataTable.Cell>
-              <Text>Available</Text>
-            </DataTable.Cell>
-
-            <View style={styles.buttonCell}>
-              <Button mode="contained" style={styles.reserveButton}>
-                <Text style={smallButtonText}>Reserve</Text>
-              </Button>
-            </View>
-          </DataTable.Row>
+          {lots.length ? (
+            lots.map(lot => <ParkingLotRow key={lot.id} {...lot} />)
+          ) : (
+            <Text>This parking does not have any available parking lots</Text>
+          )}
         </DataTable>
-      </View>
-
-      <Divider />
-
-      <View style={styles.parkingCta}>
-        <Button style={styles.ctaButton} mode="contained">
-          <Text>Get Directions on Map</Text>
-        </Button>
       </View>
     </ContainerWithFlex>
   );
@@ -85,29 +43,44 @@ const ParkingDetails = () => {
 
 const styles = StyleSheet.create({
   parkingInfo: {
-    flex: 4
-  },
-
-  parkingCta: {
-    flex: 1,
-    paddingHorizontal: 5,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-
-  ctaButton: {
-    marginVertical: 5
+    flex: 1
   },
 
   tableTitle: { fontWeight: "bold" },
-
-  reserveButton: {},
 
   buttonCell: {
     justifyContent: "center",
     alignContent: "center",
     flex: 1
   }
+});
+
+const ParkingLotRow = ({ id, state }) => {
+  console.log(id, state);
+  return (
+    <DataTable.Row>
+      <DataTable.Cell>
+        <Text>{id}</Text>
+      </DataTable.Cell>
+      <DataTable.Cell>
+        <Text>{state}</Text>
+      </DataTable.Cell>
+
+      <View style={styles.buttonCell}>
+        <Button
+          mode="contained"
+          style={styles.reserveButton}
+          disabled={state !== "available"}
+        >
+          <Text style={smallButtonText}>Reserve</Text>
+        </Button>
+      </View>
+    </DataTable.Row>
+  );
+};
+
+ParkingDetails.navigationOptions = ({ navigation }) => ({
+  title: navigation.getParam("name")
 });
 
 export default ParkingDetails;

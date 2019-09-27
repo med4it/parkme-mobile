@@ -15,16 +15,18 @@ export const signOut = async () => {
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
-  const { displayName, photoURL, email } = userAuth;
+  const { uid, displayName, photoURL, email } = userAuth;
   // Get a reference to the place in the database where the user might be.
-  const userRef = firebaseStore.doc(`users/${userAuth.uid}`);
+  const userRef = firebaseStore.doc(`users/${uid}`);
 
   // Go and fetch the document from the location
   const snapshot = await userRef.get();
 
   if (!snapshot.exists) {
+    console.log("CREATING USER...");
     try {
       await userRef.set({
+        uid,
         displayName,
         photoURL,
         email,
@@ -35,10 +37,10 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     }
   }
 
-  return await getUserRef(userAuth.uid);
+  return userRef;
 };
 
-export const getUserRef = async uid => {
+export const getUserRef = uid => {
   if (!uid) return null;
   try {
     return firebaseStore.doc(`users/${uid}`);

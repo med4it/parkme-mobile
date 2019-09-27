@@ -22,8 +22,9 @@ import ParkingDetails from "./ParkingDetails";
 import Reservations from "./Reservations";
 import Profile from "./Profile/Profile";
 import RegisterScreen from "./RegisterScreen";
-import UserProvider, { UserContext } from "../providers/UserProvider";
 import ParkingsProvider from "../providers/ParkingsProvider";
+import AuthLoadingScreen from "./AuthLoadingScreen";
+import UserProvider from "../providers/UserProvider";
 
 const HomeNavigator = createStackNavigator({
   Home: HomeScreen,
@@ -80,17 +81,14 @@ const TabNavigator = createMaterialBottomTabNavigator(
 );
 
 const Navigator = () => {
-  const user = React.useContext(UserContext);
-  console.log("USER RECEIVED = ", user);
   const AppContainer = createAppContainer(
     createSwitchNavigator(
       {
+        AuthLoading: { screen: AuthLoadingScreen },
         Auth: { screen: AuthNavigator },
         TabNavigator: { screen: TabNavigator }
       },
-      {
-        initialRouteName: user && user.displayName ? "TabNavigator" : "Auth"
-      }
+      { initialRouteName: "AuthLoading" }
     )
   );
 
@@ -99,15 +97,15 @@ const Navigator = () => {
 
 const App = () => {
   return (
-    <UserProvider>
-      <View style={{ flex: 1 }}>
-        <ParkingsProvider>
-          <PaperProvider>
+    <View style={{ flex: 1 }}>
+      <ParkingsProvider>
+        <PaperProvider>
+          <UserProvider>
             <Navigator />
-          </PaperProvider>
-        </ParkingsProvider>
-      </View>
-    </UserProvider>
+          </UserProvider>
+        </PaperProvider>
+      </ParkingsProvider>
+    </View>
   );
 };
 
