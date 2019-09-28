@@ -1,16 +1,34 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { DataTable, Button } from "react-native-paper";
-import ContainerWithFlex from "./styledComponents/ContainerWithFlex";
+import { DataTable } from "react-native-paper";
+import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 
-import { smallButtonText } from "./styles";
-import { ParkingsContext } from "../providers/ParkingsProvider";
+import { ParkingsContext } from "../../providers/ParkingsProvider";
+import { ParkingLotRow } from "./ParkingLotRow";
+import { UserContext } from "../../providers/UserProvider";
+import { firebaseStore } from "../../firebase";
 
 const ParkingDetails = ({ navigation }) => {
+  const user = React.useContext(UserContext);
+
   const id = navigation.getParam("id");
   const parkings = React.useContext(ParkingsContext);
   const park = parkings.filter(item => item.id === id)[0];
   const { lots } = park;
+
+  let reservation = {
+    parkingId: park.id,
+    price: 0
+  };
+
+  const reserveHandler = async lotId => {
+    try {
+      const userRef = firebaseStore.doc(`users/${user.uid}`);
+      await userRef.collection("reservations").add({ ...reservation, lotId });
+    } catch (error) {
+      console.err("Error Adding a Reservation", error.message);
+    }
+  };
 
   return (
     <ContainerWithFlex>
@@ -31,7 +49,13 @@ const ParkingDetails = ({ navigation }) => {
           </DataTable.Header>
 
           {lots.length ? (
-            lots.map(lot => <ParkingLotRow key={lot.id} {...lot} />)
+            lots.map(lot => (
+              <ParkingLotRow
+                key={lot.id}
+                {...lot}
+                reserveHandler={reserveHandler}
+              />
+            ))
           ) : (
             <Text>This parking does not have any available parking lots</Text>
           )}
@@ -41,43 +65,13 @@ const ParkingDetails = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   parkingInfo: {
     flex: 1
   },
 
-  tableTitle: { fontWeight: "bold" },
-
-  buttonCell: {
-    justifyContent: "center",
-    alignContent: "center",
-    flex: 1
-  }
+  tableTitle: { fontWeight: "bold" }
 });
-
-const ParkingLotRow = ({ id, state }) => {
-  console.log(id, state);
-  return (
-    <DataTable.Row>
-      <DataTable.Cell>
-        <Text>{id}</Text>
-      </DataTable.Cell>
-      <DataTable.Cell>
-        <Text>{state}</Text>
-      </DataTable.Cell>
-
-      <View style={styles.buttonCell}>
-        <Button
-          mode="contained"
-          style={styles.reserveButton}
-          disabled={state !== "available"}
-        >
-          <Text style={smallButtonText}>Reserve</Text>
-        </Button>
-      </View>
-    </DataTable.Row>
-  );
-};
 
 ParkingDetails.navigationOptions = ({ navigation }) => ({
   title: navigation.getParam("name")

@@ -10,8 +10,8 @@ import {
 } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import { buttonText, underlinedTextButton } from "./styles";
-import { firebaseAuth } from "../firebase";
+import { buttonText, underlinedTextButton } from "../styles";
+import { firebaseAuth } from "../../firebase";
 
 const AuthScreen = ({ navigation }) => {
   let [email, setEmail] = useState("");

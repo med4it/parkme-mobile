@@ -1,8 +1,8 @@
 import React from "react";
-import { UserContext } from "../providers/UserProvider";
+import { UserContext } from "../../providers/UserProvider";
 
 import { ActivityIndicator } from "react-native-paper";
-import ContainerWithFlex from "./styledComponents/ContainerWithFlex";
+import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 
 const AuthLoadingScreen = ({ navigation }) => {
   const user = React.useContext(UserContext);

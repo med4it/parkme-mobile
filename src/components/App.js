@@ -11,19 +11,19 @@ import { View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import AuthScreen from "./AuthScreen";
-import HomeScreen from "./HomeScreen";
+import AuthScreen from "./Auth/AuthScreen";
+import HomeScreen from "./Home/HomeScreen";
 
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
-import ParkingDetails from "./ParkingDetails";
-import Reservations from "./Reservations";
+import ParkingDetails from "./Reservation/ParkingDetails";
+import Reservations from "./Reservation/Reservations";
 import Profile from "./Profile/Profile";
-import RegisterScreen from "./RegisterScreen";
+import RegisterScreen from "./Auth/RegisterScreen";
 import ParkingsProvider from "../providers/ParkingsProvider";
-import AuthLoadingScreen from "./AuthLoadingScreen";
+import AuthLoadingScreen from "./Auth/AuthLoadingScreen";
 import UserProvider from "../providers/UserProvider";
 
 const HomeNavigator = createStackNavigator({

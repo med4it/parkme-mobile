@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { TextInput, Button, HelperText } from "react-native-paper";
-import { buttonText } from "./styles";
-import { firebaseAuth, createUserProfileDocument } from "../firebase";
+import { buttonText } from "../styles";
+import { firebaseAuth, createUserProfileDocument } from "../../firebase";
 
 const RegisterScreen = ({ navigation }) => {
   let [firstName, setFirstName] = useState("");

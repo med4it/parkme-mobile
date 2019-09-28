@@ -4,7 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import { StyleSheet, PermissionsAndroid, View, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { ParkingsContext } from "../providers/ParkingsProvider";
+import { ParkingsContext } from "../../providers/ParkingsProvider";
 
 const _askForLocationServices = () => {
   PermissionsAndroid.request(
