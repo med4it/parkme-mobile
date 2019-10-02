@@ -8,10 +8,11 @@
       "lint": "eslint ./src"
    },
    "dependencies": {
+      "eslint-config-prettier": "^6.3.0",
       "firebase": "^5.7.0",
       "firebase-admin": "^6.4.0",
       "firebase-tools": "^6.1.2",
-      "eslint-config-prettier": "^6.3.0",
+      "moment": "^2.24.0",
       "react": "16.8.6",
       "react-native": "0.60.5",
       "react-native-geolocation-service": "^3.1.0",

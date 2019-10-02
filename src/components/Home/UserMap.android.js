@@ -1,26 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from "react";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
-import { StyleSheet, PermissionsAndroid, View, Text } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { ParkingsContext } from "../../providers/ParkingsProvider";
-
-const _askForLocationServices = () => {
-  PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    {
-      title: "question",
-      message:
-        "Please, permit the application to get your location while you are using it."
-    }
-  ).then(() => {});
-};
 
 const UserMap = ({ navigation }) => {
   // Get parkings data
   const parkings = React.useContext(ParkingsContext);
   let [toolbarState, setToolbarState] = useState({ bottom: 1 });
+  let [firstPosition, setFirstPosition] = useState();
 
   let [locationState, setLocationState] = useState({
     position: {
@@ -32,16 +22,10 @@ const UserMap = ({ navigation }) => {
     isPositionLoaded: false
   });
 
-  const toolbarHack = () => {
-    if (toolbarState.bottom === 1) {
-      setToolbarState({ bottom: 0 });
-    }
-  };
-
   useEffect(() => {
-    _askForLocationServices();
     let watchId = Geolocation.watchPosition(
       pos => {
+        if (!firstPosition) setFirstPosition(pos);
         setLocationState({ position: pos, isPositionLoaded: true });
       },
       () => {},
@@ -54,18 +38,28 @@ const UserMap = ({ navigation }) => {
     return () => {
       Geolocation.clearWatch(watchId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const toolbarHack = () => {
+    if (toolbarState.bottom === 1) {
+      setToolbarState({ bottom: 0 });
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {locationState.isPositionLoaded === true ? (
+      {locationState.isPositionLoaded === true && firstPosition ? (
         <MapView
+          showsMyLocationButton={true}
+          minZoomLevel={15}
+          zoomControlEnabled={true}
           toolbarEnabled={true}
           provider={PROVIDER_GOOGLE}
           style={[styles.map, { bottom: toolbarState.bottom }]}
           region={{
-            latitude: locationState.position.coords.latitude,
-            longitude: locationState.position.coords.longitude,
+            latitude: firstPosition.coords.latitude,
+            longitude: firstPosition.coords.longitude,
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121
           }}

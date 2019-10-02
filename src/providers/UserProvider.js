@@ -46,6 +46,9 @@ const UserProvider = ({ children }) => {
 
         // Subscribe to user document changes
         if (isUserExists) {
+          if (unsubscribeFromUserFirestore) {
+            unsubscribeFromUserFirestore();
+          }
           unsubscribeFromUserFirestore = userRef.onSnapshot(snapshot => {
             setUser({ uid: snapshot.id, ...snapshot.data() });
           });

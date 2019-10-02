@@ -5,6 +5,7 @@ import { smallButtonText } from "../styles";
 import { StyleSheet } from "react-native";
 
 export const ParkingLotRow = ({ id, state, reserveHandler }) => {
+  let [isReserving, setIsReserving] = React.useState(false);
   return (
     <DataTable.Row>
       <DataTable.Cell>
@@ -18,10 +19,13 @@ export const ParkingLotRow = ({ id, state, reserveHandler }) => {
         <Button
           mode="contained"
           style={styles.reserveButton}
-          disabled={state !== "available"}
-          onPress={() => {
-            reserveHandler(id);
+          disabled={state !== "available" || isReserving}
+          onPress={async () => {
+            setIsReserving(true);
+            await reserveHandler(id);
+            setIsReserving(false);
           }}
+          loading={isReserving}
         >
           <Text style={smallButtonText}>Reserve</Text>
         </Button>

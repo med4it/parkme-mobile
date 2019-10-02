@@ -1,6 +1,12 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { DataTable } from "react-native-paper";
+import { StyleSheet, ScrollView, Text } from "react-native";
+import {
+  DataTable,
+  Dialog,
+  Paragraph,
+  Button,
+  Portal
+} from "react-native-paper";
 import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 
 import { ParkingsContext } from "../../providers/ParkingsProvider";
@@ -11,28 +17,66 @@ import { firebaseStore } from "../../firebase";
 const ParkingDetails = ({ navigation }) => {
   const user = React.useContext(UserContext);
 
-  const id = navigation.getParam("id");
+  let [errorState, setErrorState] = React.useState({
+    isError: false,
+    message: ""
+  });
+
+  const parkingId = navigation.getParam("id");
   const parkings = React.useContext(ParkingsContext);
-  const park = parkings.filter(item => item.id === id)[0];
-  const { lots } = park;
+  const park = parkings.filter(item => item.id === parkingId)[0];
+  let { lots } = park;
 
   let reservation = {
-    parkingId: park.id,
-    price: 0
+    parkingId,
+    parkingName: park.name,
+    price: 0,
+    parkedAt: null,
+    unparkedAt: null,
+    reservedAt: null
   };
 
   const reserveHandler = async lotId => {
     try {
+      if (user.balence < 3) {
+        throw new Error("You do not have enough money to reserve");
+      }
       const userRef = firebaseStore.doc(`users/${user.uid}`);
-      await userRef.collection("reservations").add({ ...reservation, lotId });
+      const addedReservationRef = await userRef
+        .collection("reservations")
+        .add({ ...reservation, lotId });
+
+      lots.forEach(element => {
+        if (element.id === lotId) {
+          element.state = "reserved";
+          element.reservationId = addedReservationRef.id;
+          element.reserverId = user.uid;
+        }
+      });
+
+      const url = "https://europe-west1-msiosm.cloudfunctions.net/parkingData";
+      let payload = {
+        // Parking Id
+        parkingId,
+        lots
+      };
+
+      let headers = {
+        "Content-Type": "application/json"
+      };
+      await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload)
+      });
     } catch (error) {
-      console.err("Error Adding a Reservation", error.message);
+      setErrorState({ isError: true, message: error.message });
     }
   };
 
   return (
     <ContainerWithFlex>
-      <View style={styles.parkingInfo}>
+      <ScrollView style={styles.parkingInfo}>
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>
@@ -60,7 +104,25 @@ const ParkingDetails = ({ navigation }) => {
             <Text>This parking does not have any available parking lots</Text>
           )}
         </DataTable>
-      </View>
+        <Portal>
+          <Dialog
+            visible={errorState.isError}
+            onDismiss={() => {
+              setErrorState({ isError: false });
+            }}
+          >
+            <Dialog.Title>Alert</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph>{errorState.message}</Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setErrorState({ isError: false })}>
+                Ok
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </ScrollView>
     </ContainerWithFlex>
   );
 };
