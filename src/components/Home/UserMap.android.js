@@ -1,10 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from "react";
-import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
-import { StyleSheet, View, Text } from "react-native";
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  Callout,
+  Circle
+} from "react-native-maps";
+import { StyleSheet, View, Text, Image } from "react-native";
 import Geolocation from "react-native-geolocation-service";
-import Icon from "react-native-vector-icons/FontAwesome5";
+
 import { ParkingsContext } from "../../providers/ParkingsProvider";
+import { ActivityIndicator } from "react-native-paper";
+import ContainerWithFlex from "../styledComponents/ContainerWithFlex";
 
 const UserMap = ({ navigation }) => {
   // Get parkings data
@@ -48,12 +55,11 @@ const UserMap = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ContainerWithFlex style={styles.container}>
       {locationState.isPositionLoaded === true && firstPosition ? (
         <MapView
           showsMyLocationButton={true}
           minZoomLevel={15}
-          zoomControlEnabled={true}
           toolbarEnabled={true}
           provider={PROVIDER_GOOGLE}
           style={[styles.map, { bottom: toolbarState.bottom }]}
@@ -72,7 +78,11 @@ const UserMap = ({ navigation }) => {
                 coordinate={{ latitude, longitude }}
                 key={park.name + park.available + park.occupied}
               >
-                <Icon size={30} name="parking" color="blue" />
+                <Image
+                  source={require("../../assets/images/parkingIcon.png")}
+                  style={{ height: 70, width: 70 }}
+                />
+
                 <Callout
                   onPress={() =>
                     navigation.navigate("Parking", {
@@ -93,18 +103,27 @@ const UserMap = ({ navigation }) => {
           })}
 
           {
-            <Marker
-              coordinate={locationState.position.coords}
-              key="position"
-              title="Your Position"
-            />
+            <>
+              <Circle
+                center={locationState.position.coords}
+                radius={160}
+                strokeWidth={0}
+                fillColor="rgba(13,128,205,0.2)"
+              />
+              <Circle
+                center={locationState.position.coords}
+                radius={30}
+                strokeWidth={0}
+                fillColor="rgba(13,128,205,1)"
+              />
+            </>
           }
         </MapView>
       ) : (
-        <Text>Loading...</Text>
+        <ActivityIndicator />
       )}
       <View style={styles.spacefor} />
-    </View>
+    </ContainerWithFlex>
   );
 };
 

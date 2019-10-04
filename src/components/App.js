@@ -8,7 +8,8 @@
  */
 import React from "react";
 import { View } from "react-native";
-import { Provider as PaperProvider } from "react-native-paper";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import AuthScreen from "./Auth/AuthScreen";
@@ -96,10 +97,24 @@ const Navigator = () => {
 };
 
 const App = () => {
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: "#0d80cd",
+      accent: "white",
+      fonts: {
+        regular: "Roboto",
+        medium: "Roboto",
+        light: "Roboto Light",
+        thin: "Roboto Thin"
+      }
+    }
+  };
   return (
     <View style={{ flex: 1 }}>
       <ParkingsProvider>
-        <PaperProvider>
+        <PaperProvider theme={theme}>
           <UserProvider>
             <Navigator />
           </UserProvider>

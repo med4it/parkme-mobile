@@ -1,16 +1,22 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from "react";
-import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+  KeyboardAvoidingView
+} from "react-native";
 import {
   TextInput,
   Button,
-  Divider,
   HelperText,
   ActivityIndicator
 } from "react-native-paper";
-import Icon from "react-native-vector-icons/FontAwesome";
 
-import { buttonText, underlinedTextButton } from "../styles";
+import { flatButton, textInputTheme, whiteButtonTheme } from "../styles";
 import { firebaseAuth } from "../../firebase";
 
 const AuthScreen = ({ navigation }) => {
@@ -20,18 +26,21 @@ const AuthScreen = ({ navigation }) => {
   let [loading, setLoading] = useState(false);
 
   return (
-    <>
-      <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="height"
+      enabled={false}
+    >
+      <ImageBackground
+        source={require("../../assets/images/bg-login.png")}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* Logo */}
         <View style={styles.logoContainer}>
-          <Text
-            style={{
-              fontSize: 50,
-              textAlign: "center",
-              fontWeight: "bold"
-            }}
-          >
-            ParkMe
-          </Text>
+          <Image
+            style={styles.logo}
+            source={require("../../assets/images/logo.png")}
+          />
         </View>
 
         {/* Actions */}
@@ -41,8 +50,11 @@ const AuthScreen = ({ navigation }) => {
               <HelperText type="error">{signInError}</HelperText>
             )}
           </View>
-          <View style={{ height: 80 }}>
+
+          <View style={{ height: 70 }}>
             <TextInput
+              theme={textInputTheme}
+              style={styles.input}
               autoCompleteType="email"
               keyboardType="email-address"
               textContentType="emailAddress"
@@ -52,8 +64,11 @@ const AuthScreen = ({ navigation }) => {
               onChangeText={text => setEmail(text)}
             />
           </View>
-          <View style={{ height: 80 }}>
+
+          <View style={{ height: 70 }}>
             <TextInput
+              theme={textInputTheme}
+              style={styles.input}
               autoCompleteType="password"
               textContentType="password"
               mode="flat"
@@ -62,12 +77,15 @@ const AuthScreen = ({ navigation }) => {
               value={password}
               onChangeText={text => setPassword(text)}
             />
-            <Text style={{ paddingVertical: 10 }}>Forgot password ?</Text>
           </View>
 
-          <View style={{ marginVertical: 40 }}>
+          <Text style={{ color: "white" }}>Forgot Password ?</Text>
+
+          <View>
             <Button
               mode="contained"
+              theme={whiteButtonTheme}
+              style={flatButton}
               onPress={async () => {
                 try {
                   setLoading(true);
@@ -82,56 +100,24 @@ const AuthScreen = ({ navigation }) => {
                 }
               }}
             >
-              <Text style={buttonText}>Log In</Text>
+              <Text>SIGN IN</Text>
             </Button>
             <ActivityIndicator animating={loading} />
-            <Divider style={{ marginHorizontal: 40 }} />
           </View>
 
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              height: 10
-            }}
-          >
-            <View
-              style={{
-                flex: 2
-              }}
-            >
-              <Text style={{ textAlign: "center" }}>
-                You don't have an account,
-              </Text>
-            </View>
-
-            <View
-              style={{
-                flex: 1
-              }}
-            >
-              <Button
-                compact={true}
-                mode="text"
-                onPress={() => navigation.navigate("Register")}
+          <View style={{ alignSelf: "flex-start" }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+              <Text
+                style={{
+                  textTransform: "uppercase",
+                  color: "white",
+                  padding: 0,
+                  margin: 0
+                }}
               >
-                <Text style={underlinedTextButton}>create one!</Text>
-              </Button>
-            </View>
-          </View>
-
-          <View style={{ height: 200 }}>
-            <Button
-              mode="contained"
-              color="#cf4332"
-              icon={({ size, color }) => (
-                <Icon size={16} color="white" name="google" />
-              )}
-            >
-              <Text style={buttonText}>Log in with Google</Text>
-            </Button>
+                New Account ?
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -140,15 +126,15 @@ const AuthScreen = ({ navigation }) => {
           <Text
             style={{
               textAlign: "center",
-              color: "#555",
+              color: "rgba(255, 255, 255, 0.8)",
               fontSize: 13
             }}
           >
-            ParkMe Mobile - Copyright (c) 2019
+            SmartParking Mobile - IOSM - Copyright (c) 2019
           </Text>
         </View>
-      </KeyboardAvoidingView>
-    </>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -161,19 +147,31 @@ const styles = StyleSheet.create({
   },
 
   logoContainer: {
-    flex: 1.3,
-    paddingVertical: 10,
+    flex: 2,
+    alignSelf: "center",
     justifyContent: "center"
   },
 
+  logo: {
+    width: 275,
+    height: 84
+  },
+
   cta: {
-    flex: 5,
+    flex: 4,
     paddingHorizontal: 20,
-    alignItems: "stretch"
+    justifyContent: "space-between"
   },
 
   info: {
-    flex: 0.3
+    flex: 2,
+    justifyContent: "flex-end",
+    paddingBottom: 20
+  },
+
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: "white"
   }
 });
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-const ContainerWithFlex = ({ children }) => (
-  <View style={styles.container}>{children}</View>
+const ContainerWithFlex = ({ children, style }) => (
+  <View style={{ ...styles.container, ...style }}>{children}</View>
 );
 
 const styles = StyleSheet.create({
